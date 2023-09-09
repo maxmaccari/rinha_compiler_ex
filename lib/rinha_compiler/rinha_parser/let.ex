@@ -6,19 +6,22 @@ defmodule RinhaCompiler.RinhaParser.Let do
   """
   alias RinhaCompiler.RinhaParser.{Term, Location, Parameter}
 
-  defstruct name: nil, value: nil, next: nil
+  defstruct name: nil, value: nil, next: nil, location: nil
 
   @type t :: %__MODULE__{
           name: Parameter.t(),
           value: Term.t(),
-          next: Term.t()
+          next: Term.t(),
+          location: Location.t()
         }
 
+  @spec new(map) :: t()
   def new(json) do
     %__MODULE__{
       name: Parameter.new(json["name"]),
       value: Term.new(json["value"]),
-      next: Term.new(json["next"])
+      next: Term.new(json["next"]),
+      location: Location.new(json["location"])
     }
   end
 end

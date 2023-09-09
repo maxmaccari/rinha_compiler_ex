@@ -13,6 +13,7 @@ defmodule RinhaCompiler.RinhaParser.Call do
           location: Location.t()
         }
 
+  @spec new(map) :: t()
   def new(json) do
     %__MODULE__{
       callee: Term.new(json["callee"]),

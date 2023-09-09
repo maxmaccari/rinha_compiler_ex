@@ -13,6 +13,7 @@ defmodule RinhaCompiler.RinhaParser.Function do
           location: Location.t()
         }
 
+  @spec new(map) :: t()
   def new(json) do
     %__MODULE__{
       parameters: Enum.map(json["parameters"], &Parameter.new/1),

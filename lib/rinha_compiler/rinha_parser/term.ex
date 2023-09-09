@@ -29,7 +29,9 @@ defmodule RinhaCompiler.RinhaParser.Term do
           | Str.t()
           | Tuple.t()
           | Var.t()
+          | nil
 
+  @spec new(map) :: t()
   def new(%{"kind" => "Binary"} = json), do: Binary.new(json)
   def new(%{"kind" => "Bool"} = json), do: Bool.new(json)
   def new(%{"kind" => "Call"} = json), do: Call.new(json)

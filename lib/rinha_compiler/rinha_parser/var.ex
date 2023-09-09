@@ -12,6 +12,7 @@ defmodule RinhaCompiler.RinhaParser.Var do
           location: Location.t()
         }
 
+  @spec new(map) :: t()
   def new(json) do
     %__MODULE__{
       text: json["name"],

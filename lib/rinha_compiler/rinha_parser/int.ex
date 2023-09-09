@@ -14,6 +14,7 @@ defmodule RinhaCompiler.RinhaParser.Int do
           location: Location.t()
         }
 
+  @spec new(map) :: t()
   def new(json) do
     %__MODULE__{
       value: json["value"],

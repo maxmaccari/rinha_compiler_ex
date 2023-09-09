@@ -7,6 +7,7 @@ defmodule RinhaCompiler.RinhaParser.Location do
           filename: String.t()
         }
 
+  @spec new(map) :: t()
   def new(json) do
     %__MODULE__{
       start: json["start"],

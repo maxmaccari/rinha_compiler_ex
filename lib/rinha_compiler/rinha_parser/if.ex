@@ -17,6 +17,7 @@ defmodule RinhaCompiler.RinhaParser.If do
           location: Location.t()
         }
 
+  @spec new(map) :: If.t()
   def new(json) do
     %__MODULE__{
       condition: Term.new(json["condition"]),
