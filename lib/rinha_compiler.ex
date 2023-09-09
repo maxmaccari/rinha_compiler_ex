@@ -1,18 +1,9 @@
 defmodule RinhaCompiler do
-  @moduledoc """
-  Documentation for `RinhaCompiler`.
-  """
+  alias RinhaCompiler.RinhaParser
 
-  @doc """
-  Hello world.
-
-  ## Examples
-
-      iex> RinhaCompiler.hello()
-      :world
-
-  """
-  def hello do
-    :world
+  def compile(filename) do
+    with {:ok, rinha_ast} <- RinhaParser.parse(filename) do
+      rinha_ast
+    end
   end
 end

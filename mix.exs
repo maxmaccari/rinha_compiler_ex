@@ -21,7 +21,8 @@ defmodule RinhaCompiler.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:rustler, "~> 0.29.1"}
+      {:rustler, "~> 0.29.1"},
+      {:jason, "~> 1.4"}
     ]
   end
 end
