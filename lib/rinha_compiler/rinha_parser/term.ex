@@ -47,11 +47,11 @@ defmodule RinhaCompiler.RinhaParser.Term do
   def new(%{"kind" => "Var"} = json), do: Var.new(json)
   def new(nil), do: nil
 
-  def terms(%{value: value}), do: [value]
+  def terms(%{condition: c, then: t, otherwise: o}), do: [c, t, o]
+  def terms(%{first: first, second: second}), do: [first, second]
+  def terms(%{lhs: lhs, rhs: rhs}), do: [lhs, rhs]
   def terms(%{callee: callee, arguments: arguments}), do: [callee | arguments]
   def terms(%{value: value, next: next}), do: [value, next]
-  def terms(%{condition: c, then: t, otherwise: o}), do: [c, t, o]
-  def terms(%{lhs: lhs, rhs: rhs}), do: [lhs, rhs]
-  def terms(%{first: first, second: second}), do: [first, second]
+  def terms(%{value: value}) when is_struct(value), do: [value]
   def terms(_), do: []
 end
