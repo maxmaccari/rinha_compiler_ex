@@ -25,7 +25,7 @@ defmodule RinhaCompiler.RinhaParser.Second do
     def parse(second) do
       tuple = AstParseable.parse(second.value)
 
-      quote do: elem(unquote(tuple), 1)
+      quote do: Rinha.Tuple.second(unquote(tuple))
     end
   end
 end
