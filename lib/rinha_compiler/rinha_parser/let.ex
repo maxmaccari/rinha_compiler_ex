@@ -66,8 +66,17 @@ defmodule RinhaCompiler.RinhaParser.Let do
       parameter = AstParseable.parse(let.name)
       value = AstParseable.parse(let.value)
 
-      quote do
-        unquote(parameter) = unquote(value)
+      if let.next do
+        next = AstParseable.parse(let.next)
+
+        quote do
+          unquote(parameter) = unquote(value)
+          unquote(next)
+        end
+      else
+        quote do
+          unquote(parameter) = unquote(value)
+        end
       end
     end
   end
