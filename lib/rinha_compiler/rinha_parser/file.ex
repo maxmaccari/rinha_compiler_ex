@@ -49,6 +49,8 @@ defmodule RinhaCompiler.RinhaParser.File do
               is_tuple(term) -> IO.puts("(#{elem(term, 0)}, #{elem(term, 1)})")
               true -> IO.puts(term)
             end
+
+            term
           end
 
           def run() do
