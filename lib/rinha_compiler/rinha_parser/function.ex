@@ -29,7 +29,7 @@ defmodule RinhaCompiler.RinhaParser.Function do
       value = AstParseable.parse(function.value)
 
       quote do
-        fn unquote_splicing(parameters) -> unquote(value) end
+        Rinha.Function.new(fn unquote_splicing(parameters) -> unquote(value) end)
       end
     end
   end
