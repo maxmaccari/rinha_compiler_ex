@@ -33,7 +33,9 @@ defmodule RinhaCompiler do
   def eval(filename) do
     with {:ok, elixir_ast, module_name} <- compile(filename) do
       Code.eval_quoted(elixir_ast)
-      apply(module_name, :run, [])
+      res = apply(module_name, :run, [])
+
+      {:ok, res}
     end
   end
 
