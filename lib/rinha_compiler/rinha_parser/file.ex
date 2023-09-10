@@ -23,20 +23,26 @@ defmodule RinhaCompiler.RinhaParser.File do
     }
   end
 
+  def module_name(%__MODULE__{name: name}) do
+    module_name =
+      name
+      |> Path.basename(".rinha")
+      |> Macro.camelize()
+
+    String.to_atom("Elixir.Rinha.#{module_name}")
+  end
+
   defimpl AstParseable, for: __MODULE__ do
+    alias RinhaCompiler.RinhaParser.File
+
     @spec parse(File.t()) :: tuple()
     def parse(file) do
-      module_name =
-        file.name
-        |> Path.basename(".rinha")
-        |> Macro.camelize()
-
-      module_full_name = String.to_atom("Elixir.Rinha.#{module_name}")
+      module_name = File.module_name(file)
 
       expression = AstParseable.parse(file.expression)
 
       quote do
-        defmodule unquote(module_full_name) do
+        defmodule unquote(module_name) do
           def run() do
             unquote(expression)
           end

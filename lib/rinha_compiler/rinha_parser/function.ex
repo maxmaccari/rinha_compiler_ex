@@ -3,6 +3,7 @@ defmodule RinhaCompiler.RinhaParser.Function do
   Function é a criação de uma função anônima que pode capturar o ambiente.
   """
 
+  alias RinhaCompiler.ElixirAstParser.AstParseable
   alias RinhaCompiler.RinhaParser.{Term, Location, Parameter}
 
   defstruct parameters: nil, value: nil, location: nil
@@ -20,5 +21,16 @@ defmodule RinhaCompiler.RinhaParser.Function do
       value: Term.new(json["value"]),
       location: Location.new(json["location"])
     }
+  end
+
+  defimpl AstParseable, for: __MODULE__ do
+    def parse(function) do
+      parameters = Enum.map(function.parameters, &AstParseable.parse/1)
+      value = AstParseable.parse(function.value)
+
+      quote do
+        fn unquote_splicing(parameters) -> unquote(value) end
+      end
+    end
   end
 end

@@ -3,6 +3,7 @@ defmodule RinhaCompiler.RinhaParser.First do
   First é uma chamada de função que pega o primeiro elemento de uma tupla.
   """
 
+  alias RinhaCompiler.ElixirAstParser.AstParseable
   alias RinhaCompiler.RinhaParser.{Term, Location}
 
   defstruct value: nil, location: nil
@@ -18,5 +19,13 @@ defmodule RinhaCompiler.RinhaParser.First do
       value: Term.new(json["value"]),
       location: Location.new(json["location"])
     }
+  end
+
+  defimpl AstParseable, for: __MODULE__ do
+    def parse(first) do
+      tuple = AstParseable.parse(first.value)
+
+      quote do: elem(unquote(tuple), 0)
+    end
   end
 end

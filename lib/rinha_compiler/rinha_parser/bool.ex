@@ -3,6 +3,7 @@ defmodule RinhaCompiler.RinhaParser.Bool do
   Bool é uma estrutura que representa um literal booleano.
   """
 
+  alias RinhaCompiler.ElixirAstParser.AstParseable
   alias RinhaCompiler.RinhaParser.Location
 
   defstruct value: nil, location: nil
@@ -18,5 +19,13 @@ defmodule RinhaCompiler.RinhaParser.Bool do
       value: json["value"],
       location: Location.new(json["location"])
     }
+  end
+
+  defimpl AstParseable, for: __MODULE__ do
+    def parse(bool) do
+      quote do
+        unquote(bool.value)
+      end
+    end
   end
 end

@@ -3,6 +3,7 @@ defmodule RinhaCompiler.RinhaParser.Tuple do
   Tuple é uma estrutura que representa uma tupla dentro da linguagem.
   """
 
+  alias RinhaCompiler.ElixirAstParser.AstParseable
   alias RinhaCompiler.RinhaParser.{Term, Location}
 
   defstruct first: nil, second: nil, location: nil
@@ -20,5 +21,16 @@ defmodule RinhaCompiler.RinhaParser.Tuple do
       second: Term.new(json["second"]),
       location: Location.new(json["location"])
     }
+  end
+
+  defimpl AstParseable, for: __MODULE__ do
+    def parse(tuple) do
+      first = AstParseable.parse(tuple.first)
+      second = AstParseable.parse(tuple.second)
+
+      quote do
+        {unquote(first), unquote(second)}
+      end
+    end
   end
 end

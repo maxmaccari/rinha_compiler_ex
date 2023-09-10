@@ -6,6 +6,7 @@ defmodule RinhaCompiler.RinhaParser.Print do
   `print(true)`, `print((1, 2))`
   """
 
+  alias RinhaCompiler.ElixirAstParser.AstParseable
   alias RinhaCompiler.RinhaParser.{Term, Location}
 
   defstruct value: nil, location: nil
@@ -21,5 +22,15 @@ defmodule RinhaCompiler.RinhaParser.Print do
       value: Term.new(json["value"]),
       location: Location.new(json["location"])
     }
+  end
+
+  defimpl AstParseable, for: __MODULE__ do
+    def parse(print) do
+      value = AstParseable.parse(print.value)
+
+      quote do
+        IO.puts(unquote(value))
+      end
+    end
   end
 end

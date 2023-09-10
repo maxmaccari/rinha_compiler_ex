@@ -5,6 +5,7 @@ defmodule RinhaCompiler.RinhaParser.Int do
 
   # TODO: Limitar o tamanho do inteiro para 32 bits
 
+  alias RinhaCompiler.ElixirAstParser.AstParseable
   alias RinhaCompiler.RinhaParser.Location
 
   defstruct value: nil, location: nil
@@ -20,5 +21,11 @@ defmodule RinhaCompiler.RinhaParser.Int do
       value: json["value"],
       location: Location.new(json["location"])
     }
+  end
+
+  defimpl AstParseable, for: __MODULE__ do
+    def parse(int) do
+      quote do: unquote(int.value)
+    end
   end
 end
