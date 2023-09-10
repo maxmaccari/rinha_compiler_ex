@@ -43,6 +43,14 @@ defmodule RinhaCompiler.RinhaParser.File do
 
       quote do
         defmodule unquote(module_name) do
+          defp print(term) do
+            cond do
+              is_function(term) -> IO.puts("<#closure>")
+              is_tuple(term) -> IO.puts("(#{elem(term, 0)}, #{elem(term, 1)})")
+              true -> IO.puts(term)
+            end
+          end
+
           def run() do
             unquote(expression)
           end

@@ -29,7 +29,7 @@ defmodule RinhaCompiler.RinhaParser.Print do
       value = AstParseable.parse(print.value)
 
       quote do
-        Rinha.IO.print(unquote(value))
+        print(unquote(value))
       end
     end
   end
