@@ -29,7 +29,7 @@ defmodule RinhaCompiler.RinhaParser.Call do
       arguments = Enum.map(call.arguments, &AstParseable.parse/1)
 
       quote do
-        Rinha.Function.call(unquote(var_name), [unquote_splicing(arguments)])
+        unquote(var_name).(unquote_splicing(arguments))
       end
     end
   end

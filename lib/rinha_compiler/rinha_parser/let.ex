@@ -45,37 +45,62 @@ defmodule RinhaCompiler.RinhaParser.Let do
   end
 
   defimpl AstParseable, for: __MODULE__ do
-    # alias RinhaCompiler.RinhaParser.Let
+    alias RinhaCompiler.RinhaParser.Let
 
     def parse(let) do
-      # recursive_name = Macro.var(:"do_#{let.name.text}", nil)
-      # body = AstParseable.parse(let.value)
+      let_identifier = AstParseable.parse(let.name)
 
-      # parameter = AstParseable.parse(let.name)
-      # TODO: Implement a recursive trick like this:
-      # do_fib = fn n, do_fib ->
-      #   if n < 2 do
-      #     n
-      #   else
-      #     do_fib.(n - 1, do_fib) + do_fib.(n - 2, do_fib)
-      #   end
-      # end
-
-      # fib = fn n -> do_fib.(n, do_fib) end
-
-      parameter = AstParseable.parse(let.name)
-      value = AstParseable.parse(let.value)
+      value =
+        if Let.recusive?(let) do
+          parse_recursive(let)
+        else
+          AstParseable.parse(let.value)
+        end
 
       if let.next do
         next = AstParseable.parse(let.next)
 
         quote do
-          unquote(parameter) = unquote(value)
+          unquote(let_identifier) = unquote(value)
           unquote(next)
         end
       else
         quote do
-          unquote(parameter) = unquote(value)
+          unquote(let_identifier) = unquote(value)
+        end
+      end
+    end
+
+    defp parse_recursive(let) do
+      current_identifier = let.name.text |> String.to_atom()
+      recursive_identifier = "do_#{let.name.text}" |> String.to_atom()
+      recursive_parameter = Macro.var(recursive_identifier, nil)
+
+      parameters = Enum.map(let.value.parameters, &AstParseable.parse/1)
+      recursive_parameters = parameters ++ [recursive_parameter]
+
+      # It turns a function into a recursive function:
+      # `sum = fn a -> sum.(a) end`
+      # into
+      # `sum = fn a, sum -> sum.(a, sum) end`
+      # So, all magic happens here
+      body =
+        AstParseable.parse(let.value.value)
+        |> Macro.postwalk(fn
+          {{:., [], [{^current_identifier, [], nil}]}, [], params} ->
+            {{:., [], [{recursive_identifier, [], nil}]}, [], params ++ [recursive_parameter]}
+
+          ast ->
+            ast
+        end)
+
+      quote do
+        fn unquote_splicing(parameters) ->
+          unquote(recursive_parameter) = fn unquote_splicing(recursive_parameters) ->
+            unquote(body)
+          end
+
+          unquote(recursive_parameter).(unquote_splicing(recursive_parameters))
         end
       end
     end
