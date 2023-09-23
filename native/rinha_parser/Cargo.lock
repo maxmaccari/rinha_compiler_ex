@@ -732,9 +732,9 @@ checksum = "dbb5fb1acd8a1a18b3dd5be62d25485eb770e05afb408a9627d14d451bae12da"
 
 [[package]]
 name = "rinha"
-version = "0.0.5"
+version = "0.0.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "40607f07780b59dd21a1f9e5b41991b64a473447e27430b336b566a698c7e2b1"
+checksum = "523ede93117c86089144fe07a8a586f2516b60e06e4e88bc86e8410e10850d82"
 dependencies = [
  "bupropion",
  "clap",
