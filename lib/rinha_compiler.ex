@@ -71,15 +71,19 @@ defmodule RinhaCompiler do
   end
 
   defp to_beam(elixir_ast) do
-    {:module, _, _,{:module, _, binary, _}} = Module.create(Rinha.Wrapper, elixir_ast, __ENV__)
+    {:module, _, _, {:module, _, binary, _}} = Module.create(Rinha.Wrapper, elixir_ast, __ENV__)
 
     binary
   end
 
-  def to_erlang(elixir_ast) do
-    {:ok,{_,[abstract_code: {_, code}]}} =
-      elixir_ast |> to_beam() |> :beam_lib.chunks([:abstract_code])
+  def to_erlang(filename) do
+    with {:ok, elixir_ast, _module_name} <- to_elixir_ast(filename) do
+      {:ok, {_, [abstract_code: {_, code}]}} =
+        elixir_ast |> to_beam() |> :beam_lib.chunks([:abstract_code])
 
-      code |> :erl_syntax.form_list |> :erl_prettypr.format |> to_string()
+      erlang_code = code |> :erl_syntax.form_list() |> :erl_prettypr.format() |> to_string()
+
+      {:ok, erlang_code}
+    end
   end
 end
