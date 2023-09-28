@@ -5,7 +5,7 @@ defmodule RinhaCompiler.Main do
   def main(args) do
     {options, path, _} =
       OptionParser.parse(args,
-        strict: [help: :boolean, to_elixir: :boolean],
+        strict: [help: :boolean, to_elixir: :boolean, compile: :boolean],
         aliases: [h: :help, r: :run]
       )
 
@@ -32,7 +32,10 @@ defmodule RinhaCompiler.Main do
         {:ok, help()}
 
       Keyword.get(options, :to_elixir) ->
-        RinhaCompiler.to_elixir(filepath)
+        RinhaCompiler.to_elixir!(filepath) |> IO.puts()
+
+      Keyword.get(options, :compile) ->
+        RinhaCompiler.compile(filepath)
 
       true ->
         case RinhaCompiler.eval(filepath) do

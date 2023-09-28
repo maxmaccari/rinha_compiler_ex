@@ -9,7 +9,8 @@ ENV RUSTUP_HOME=/usr/local/rustup \
   CARGO_HOME=/usr/local/cargo \
   PATH=/usr/local/cargo/bin:$PATH \
   RUST_VERSION=1.72.1 \
-  RUSTFLAGS='--codegen target-feature=-crt-static'
+  RUSTFLAGS='--codegen target-feature=-crt-static' \
+  MIX_ENV=prod
 
 RUN set -eux; \
   dpkgArch="$(dpkg --print-architecture)"; \
@@ -42,5 +43,6 @@ RUN ["mix", "deps.compile"]
 COPY . .
 
 RUN ["mix", "compile"]
+RUN ["mix", "release"]
 
-CMD ["mix", "run", "-e", "\"RinhaCompiler.eval(\\\"files/fib.rinha\\\")\""]
+ENTRYPOINT [ "_build/prod/rel/bakeware/rinha" ]
