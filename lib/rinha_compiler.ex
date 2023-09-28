@@ -75,15 +75,4 @@ defmodule RinhaCompiler do
 
     binary
   end
-
-  def to_erlang(filename) do
-    with {:ok, elixir_ast, _module_name} <- to_elixir_ast(filename) do
-      {:ok, {_, [abstract_code: {_, code}]}} =
-        elixir_ast |> to_beam() |> :beam_lib.chunks([:abstract_code])
-
-      erlang_code = code |> :erl_syntax.form_list() |> :erl_prettypr.format() |> to_string()
-
-      {:ok, erlang_code}
-    end
-  end
 end
