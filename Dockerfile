@@ -1,9 +1,10 @@
-FROM elixir:1.15.4
+FROM elixir:1.15.4-alpine
 
-RUN apt-get update && apt-get install -y \
+RUN apk add \
   ca-certificates \
   gcc \
-  musl-dev
+  musl-dev \
+  make
 
 ENV RUSTUP_HOME=/usr/local/rustup \
   CARGO_HOME=/usr/local/cargo \
@@ -13,13 +14,11 @@ ENV RUSTUP_HOME=/usr/local/rustup \
   MIX_ENV=prod
 
 RUN set -eux; \
-  dpkgArch="$(dpkg --print-architecture)"; \
-  case "${dpkgArch##*-}" in \
-  amd64) rustArch='x86_64-unknown-linux-gnu'; rustupSha256='0b2f6c8f85a3d02fde2efc0ced4657869d73fccfce59defb4e8d29233116e6db' ;; \
-  armhf) rustArch='armv7-unknown-linux-gnueabihf'; rustupSha256='f21c44b01678c645d8fbba1e55e4180a01ac5af2d38bcbd14aa665e0d96ed69a' ;; \
-  arm64) rustArch='aarch64-unknown-linux-gnu'; rustupSha256='673e336c81c65e6b16dcdede33f4cc9ed0f08bde1dbe7a935f113605292dc800' ;; \
-  i386) rustArch='i686-unknown-linux-gnu'; rustupSha256='e7b0f47557c1afcd86939b118cbcf7fb95a5d1d917bdd355157b63ca00fc4333' ;; \
-  *) echo >&2 "unsupported architecture: ${dpkgArch}"; exit 1 ;; \
+  apkArch="$(apk --print-arch)"; \
+  case "$apkArch" in \
+  x86_64) rustArch='x86_64-unknown-linux-musl'; rustupSha256='7aa9e2a380a9958fc1fc426a3323209b2c86181c6816640979580f62ff7d48d4' ;; \
+  aarch64) rustArch='aarch64-unknown-linux-musl'; rustupSha256='b1962dfc18e1fd47d01341e6897cace67cddfabf547ef394e8883939bd6e002e' ;; \
+  *) echo >&2 "unsupported architecture: $apkArch"; exit 1 ;; \
   esac; \
   url="https://static.rust-lang.org/rustup/archive/1.26.0/${rustArch}/rustup-init"; \
   wget "$url"; \
@@ -31,7 +30,10 @@ RUN set -eux; \
   rustup --version; \
   cargo --version; \
   rustc --version;
+
 RUN ["mix", "local.hex", "--force"]
+
+
 
 WORKDIR /workspace
 COPY mix.exs .
@@ -41,6 +43,8 @@ RUN ["mix", "deps.get"]
 RUN ["mix", "deps.compile"]
 
 COPY . .
+
+RUN ["rm", "-rf", "_build"]
 
 RUN ["mix", "compile"]
 RUN ["mix", "release"]
